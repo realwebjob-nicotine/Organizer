@@ -1,17 +1,18 @@
-﻿using Caliburn.Micro;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
-using Castle.Windsor.Installer;
-using Organizer.ViewModels;
+﻿using Organizer.ViewModels;
 using Organizer.Views;
+using Organizer.Models;
+using Caliburn.Micro;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
 using System.Reflection;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Windows;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Organizer
 {
@@ -25,8 +26,26 @@ namespace Organizer
 
         protected override void Configure()
         {
+            container.Instance(container);
             container.Singleton<IWindowManager, WindowManager>();
-            container.Singleton<IEventAggregator, EventAggregator>();
+
+            container.Singleton<MainModel>();
+
+            foreach (var assembly in SelectAssemblies())
+            {
+                assembly.GetTypes()
+               .Where(type => type.IsClass)
+               .Where(type => type.Name.EndsWith("ViewModel"))
+               .ToList()
+               .ForEach(viewModelType => container.RegisterPerRequest(
+                   viewModelType, viewModelType.ToString(), viewModelType));
+            }
+        }
+
+        protected override async void OnStartup(object sender, StartupEventArgs e)
+        {
+            var c = IoC.Get<SimpleContainer>();
+            await DisplayRootViewForAsync(typeof(MainViewModel));
         }
     }
 }
