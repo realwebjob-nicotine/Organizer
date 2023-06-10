@@ -1,4 +1,6 @@
 ﻿using Caliburn.Micro;
+using Organizer.Models;
+using Organizer.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,27 +9,46 @@ using System.Threading.Tasks;
 
 namespace Organizer.ViewModels
 {
-    public class MainViewModel : Conductor<object>
+    public class MainViewModel : Conductor<object>, IShell
     {
-        private readonly IWindowManager WindowManager;
+        private readonly IWindowManager windowManager;
+        private readonly MainModel model;
 
-        public MainViewModel(IWindowManager windowManager)
+        public MainViewModel()
         {
-            WindowManager = windowManager;
+            windowManager = IoC.Get<WindowManager>();
+            model = IoC.Get<MainModel>();
         }
 
-        public BindableCollection<BaseDocumentViewModel> Documents { get; set; }
+        public BindableCollection<BaseDocument> Documents { get; set; }
 
-        protected async override void OnViewLoaded(object view)
+        protected override void OnViewLoaded(object view)
         {
             base.OnViewLoaded(view);
 
-            Documents = new BindableCollection<BaseDocumentViewModel>();
+            LoadDocuments();
         }
 
-        public Task AddDocument()
+        private void LoadDocuments()
         {
-            return WindowManager.ShowDialogAsync(IoC.Get<DocumentViewModel>());
+            var list = model.ReadDocuments();
+            Documents = new BindableCollection<BaseDocument>(list);
+        }
+
+        public void AddDocument()
+        {
+            windowManager.ShowDialogAsync(IoC.Get<DocumentViewModel>());
+            LoadDocuments();
+        }
+
+        public void Open(BaseDocument document)
+        {
+            var vm = IoC.Get<DocumentViewModel>();
+
+            vm.Document = document;
+
+            windowManager.ShowDialogAsync(vm);
+            LoadDocuments();
         }
     }
 }
