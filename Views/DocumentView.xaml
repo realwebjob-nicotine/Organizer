@@ -30,6 +30,7 @@
         <TextBox
             Grid.Column="1"
             Grid.ColumnSpan="2"
+            Margin="0,5,5,5"
             Style="{StaticResource TextBoxForFormStyle}"
             Text="{Binding Id}" />
 
@@ -43,6 +44,8 @@
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
+            Margin="0,5,5,5"
+            IsReadOnly="True"
             Style="{StaticResource TextBoxForFormStyle}"
             Text="{Binding Name}" />
 
@@ -55,12 +58,14 @@
         <TextBox
             Grid.Row="2"
             Grid.Column="1"
+            Margin="0,5,5,5"
             Style="{StaticResource TextBoxForFormStyle}"
             Text="{Binding Signature, Mode=OneWay}" />
         <Button
             Grid.Row="2"
             Grid.Column="3"
             Margin="0,5,5,5"
+            cal:Message.Attach="[Event Click] = [Action Sign]"
             Style="{StaticResource AccentButtonStyle}">
             Подписать
         </Button>
@@ -75,6 +80,7 @@
             Grid.Row="3"
             Grid.Column="1"
             Grid.ColumnSpan="2"
+            Margin="0,5,5,5"
             VerticalContentAlignment="Top"
             Style="{StaticResource TextBoxForFormStyle}"
             Text="{Binding Description}" />
