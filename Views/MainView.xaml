@@ -16,6 +16,7 @@
             <Setter Property="Control.Width" Value="120" />
             <Setter Property="Control.Height" Value="40" />
         </Style>
+        <local:EnumConverter x:Key="EnumTypeDesctiptionToStringConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -66,7 +67,7 @@
                     Header="Наименование" />
                 <DataGridTextColumn
                     Width="100"
-                    Binding="{Binding Type}"
+                    Binding="{Binding Type, Converter={StaticResource EnumTypeDesctiptionToStringConverter}}"
                     Header="Тип" />
             </DataGrid.Columns>
         </DataGrid>

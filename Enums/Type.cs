@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,10 +15,12 @@ namespace Organizer.Enums
         /// <summary>
         /// Документ
         /// </summary>
+        [Description("Документ")]
         Document,
         /// <summary>
         /// Задача
         /// </summary>
+        [Description("Задача")]
         Task
     }
 }
