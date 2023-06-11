@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Organizer.ViewModels
 {
-    public class MainViewModel : Conductor<object>, IShell
+    public class MainViewModel : Conductor<object>
     {
         private readonly IWindowManager windowManager;
         private readonly MainModel model;
@@ -41,13 +41,29 @@ namespace Organizer.ViewModels
             LoadDocuments();
         }
 
+        public void AddTask()
+        {
+            windowManager.ShowDialogAsync(IoC.Get<TaskViewModel>());
+            LoadDocuments();
+        }
+
         public void Open(BaseDocument document)
         {
-            var vm = IoC.Get<DocumentViewModel>();
+            if (document.Type == Enums.Type.Document)
+            {
+                var vm = IoC.Get<DocumentViewModel>();
+                vm.Mode = Enums.WindowMode.Update;
+                vm.Document = document;
+                windowManager.ShowDialogAsync(vm);
+            }
+            else
+            {
+                var vm = IoC.Get<TaskViewModel>();
+                vm.Mode = Enums.WindowMode.Update;
+                vm.Document = document;
+                windowManager.ShowDialogAsync(vm);
+            }
 
-            vm.Document = document;
-
-            windowManager.ShowDialogAsync(vm);
             LoadDocuments();
         }
     }

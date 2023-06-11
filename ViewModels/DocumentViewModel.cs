@@ -19,6 +19,7 @@ namespace Organizer.ViewModels
         private readonly MainModel Model;
 
         private BaseDocument document;
+        private int id;
 
         public BaseDocument Document
         {
@@ -30,7 +31,7 @@ namespace Organizer.ViewModels
                 Id = document.Id;
                 Name = document.Name;
                 Description = document.Description;
-                Signature = document.Signature;
+                Signature = (Guid)document.Signature;
 
                 NotifyOfPropertyChange(() => document);
             }
@@ -39,17 +40,63 @@ namespace Organizer.ViewModels
         public string Name { get; set; }
         public string Description { get; set; }
         public Guid Signature { get; set; }
+        public Enums.WindowMode Mode { get; set; }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+
+            GenerateId();
+        }
 
         public void Save()
         {
-            Model.AddDocument(new BaseDocument()
+            var document = new BaseDocument()
             {
                 Id = Id,
                 Name = Name,
                 Description = Description,
                 Type = Enums.Type.Document,
                 Signature = Signature
-            });
+            };
+
+            //TODO: на рефакторинг, повторяющийся код можно вынести в сервис
+            if (Mode == Enums.WindowMode.Create)
+            {
+                if (Model.ExistsId(Id))
+                {
+                    // message
+                }
+                else
+                {
+                    Model.AddDocument(document);
+                }
+            }
+            else
+            {
+                Model.UpdateDocument(document);
+            }
+        }
+
+        public void Sign()
+        {
+            var newSign = Guid.NewGuid();
+
+            while (Model.ExistsSignature(newSign))
+            {
+                newSign = Guid.NewGuid();
+            }
+
+            Signature = newSign;
+        }
+
+        private void GenerateId()
+        {
+            if (Id == default)
+            {
+                Id = Model.GetMaxId();
+                Id++;
+            }
         }
     }
 }

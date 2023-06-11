@@ -13,11 +13,31 @@ namespace Organizer.Models
     {
         private string path = "data.json";
 
+        public BaseDocument GetDocumentById(int id)
+        {
+            var documents = ReadDocuments();
+            return documents.SingleOrDefault(document => document.Id == id);
+        }
+
+        public BaseDocument GetDocumentBySignature(Guid sign)
+        {
+            var documents = ReadDocuments();
+            var document = documents.SingleOrDefault(document => document.Type == Enums.Type.Document && document.Signature == sign);
+            return document;
+        }
+
         public void AddDocument(BaseDocument document)
         {
             var documents = ReadDocuments();
             documents.Add(document);
             WriteDocuments(documents);
+        }
+
+        public void UpdateDocument(BaseDocument updatedDocument)
+        {
+            var document = GetDocumentById(updatedDocument.Id);
+            DeleteDocument(document);
+            AddDocument(updatedDocument);
         }
 
         public void DeleteDocument(BaseDocument document)
@@ -45,6 +65,24 @@ namespace Organizer.Models
         public void WriteDocuments(List<BaseDocument> documents)
         {
             File.WriteAllText(path, JsonConvert.SerializeObject(documents));
+        }
+
+        public bool ExistsId(int id)
+        {
+            var document = GetDocumentById(id);
+            return document != null;
+        }
+
+        public bool ExistsSignature(Guid guid)
+        {
+            var document = GetDocumentBySignature(guid);
+            return document != null;
+        }
+
+        public int GetMaxId()
+        {
+            var documents = ReadDocuments();
+            return documents.Max(document => document.Id);
         }
     }
 }
