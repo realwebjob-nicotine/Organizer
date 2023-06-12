@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Organizer.ViewModels
 {
@@ -69,8 +70,13 @@ namespace Organizer.ViewModels
 
         public void Delete(BaseDocument document)
         {
-            model.DeleteDocument(document);
-            LoadDocuments();
+            var messageBoxText = string.Format("Вы действительно хотите удалить документ {0} ?", document.Name);
+            var caption = "Удаление документа";
+            if (MessageBox.Show(messageBoxText, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                model.DeleteDocument(document);
+                LoadDocuments();
+            }
         }
     }
 }

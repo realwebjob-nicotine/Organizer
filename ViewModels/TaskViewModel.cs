@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Organizer.ViewModels
@@ -69,6 +70,8 @@ namespace Organizer.ViewModels
 
         public void Save()
         {
+            var caption = "Редактирование задачи";
+
             var document = new BaseDocument()
             {
                 Id = Id,
@@ -83,16 +86,31 @@ namespace Organizer.ViewModels
             {
                 if (Model.ExistsId(Id))
                 {
-                    // message
+                    MessageBox.Show("Измените идентификатор, такой идентификатор уже есть!", caption, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
-                    Model.AddDocument(document);
+                    if (Model.AddDocument(document))
+                    {
+                        var message = "Задача добавлена, закрыть окно?";
+                        if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            Cancel();
+                        }
+                    }
+
                 }
             }
             else
             {
-                Model.UpdateDocument(document);
+                if (Model.UpdateDocument(document))
+                {
+                    var message = "Задача обновлена, закрыть окно?";
+                    if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        Cancel();
+                    }
+                }
             }
         }
 

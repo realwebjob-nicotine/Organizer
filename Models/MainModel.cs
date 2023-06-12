@@ -26,18 +26,20 @@ namespace Organizer.Models
             return document;
         }
 
-        public void AddDocument(BaseDocument document)
+        public bool AddDocument(BaseDocument document)
         {
             var documents = ReadDocuments();
             documents.Add(document);
             WriteDocuments(documents);
+            return true;
         }
 
-        public void UpdateDocument(BaseDocument updatedDocument)
+        public bool UpdateDocument(BaseDocument updatedDocument)
         {
             var document = GetDocumentById(updatedDocument.Id);
             DeleteDocument(document);
             AddDocument(updatedDocument);
+            return true;
         }
 
         public void DeleteDocument(BaseDocument document)
