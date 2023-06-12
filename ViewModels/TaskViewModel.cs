@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Organizer.ViewModels
 {
@@ -123,6 +124,11 @@ namespace Organizer.ViewModels
                 return attributes[0].Description;
             else
                 return value.ToString();
+        }
+
+        public void Cancel()
+        {
+            TryCloseAsync();
         }
     }
 }

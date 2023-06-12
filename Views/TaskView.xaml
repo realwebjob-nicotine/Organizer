@@ -93,7 +93,7 @@
             <Button
                 Width="100"
                 Margin="0,5,5,5"
-                cal:Message.Attach="[Event Click] = [Action Cansel]"
+                cal:Message.Attach="[Event Click] = [Action Cancel]"
                 Style="{StaticResource CanselButtonStyle}">
                 Отменить
             </Button>

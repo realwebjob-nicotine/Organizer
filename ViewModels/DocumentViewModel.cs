@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Organizer.ViewModels
 {
@@ -97,6 +98,11 @@ namespace Organizer.ViewModels
                 Id = Model.GetMaxId();
                 Id++;
             }
+        }
+
+        public void Cancel()
+        {
+            TryCloseAsync();
         }
     }
 }
