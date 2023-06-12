@@ -43,12 +43,23 @@ namespace Organizer.ViewModels
         public string Description { get; set; }
         public Guid Signature { get; set; }
         public Enums.WindowMode Mode { get; set; }
+        public bool IdIsReadOnly { get; set; }
+        public bool SaveButtonEnabled => Id != default && !string.IsNullOrEmpty(Name) && Signature != Guid.Empty;
 
         protected override void OnViewLoaded(object view)
         {
             base.OnViewLoaded(view);
 
             GenerateId();
+
+            if (Mode == Enums.WindowMode.Create)
+            {
+                IdIsReadOnly = false;
+            }
+            else
+            {
+                IdIsReadOnly = true;
+            }
         }
 
         public void Save()

@@ -52,6 +52,8 @@ namespace Organizer.ViewModels
         public Type Type { get; set; }
         public StateExtended SelectedState { get; set; }
         public Enums.WindowMode Mode { get; set; }
+        public bool IdIsReadOnly { get; set; }
+        public bool SaveButtonEnabled => Id != default && !string.IsNullOrEmpty(Name);
 
         public BindableCollection<StateExtended> States { get; set; }
 
@@ -65,6 +67,12 @@ namespace Organizer.ViewModels
             if (Mode == Enums.WindowMode.Create)
             {
                 SelectedState = States.FirstOrDefault();
+                IdIsReadOnly = false;
+            }
+            else
+            {
+                SelectedState = States.Single(s => s.State == SelectedState.State);
+                IdIsReadOnly = true;
             }
         }
 
