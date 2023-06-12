@@ -66,5 +66,11 @@ namespace Organizer.ViewModels
 
             LoadDocuments();
         }
+
+        public void Delete(BaseDocument document)
+        {
+            model.DeleteDocument(document);
+            LoadDocuments();
+        }
     }
 }

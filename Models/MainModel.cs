@@ -43,7 +43,8 @@ namespace Organizer.Models
         public void DeleteDocument(BaseDocument document)
         {
             var documents = ReadDocuments();
-            documents.Remove(document);
+            var documentRemove = documents.Single(doc => doc.Id == document.Id);
+            documents.Remove(documentRemove);
             WriteDocuments(documents);
         }
 
@@ -82,7 +83,16 @@ namespace Organizer.Models
         public int GetMaxId()
         {
             var documents = ReadDocuments();
-            return documents.Max(document => document.Id);
+
+            if (documents.Count != 0)
+            {
+                return documents.Max(document => document.Id);
+            }
+            else
+            {
+                return 0;
+            }
+
         }
     }
 }

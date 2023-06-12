@@ -48,7 +48,7 @@
             GridLinesVisibility="All"
             ItemsSource="{Binding Documents}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Width="100">
+                <DataGridTemplateColumn Width="120">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -57,6 +57,11 @@
                                     cal:Action.TargetWithoutContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                     cal:Message.Attach="[Event Click] = [Action Open($dataContext)]"
                                     Content="Открыть" />
+                                <Button
+                                    Margin="5,0"
+                                    cal:Action.TargetWithoutContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                    cal:Message.Attach="[Event Click] = [Action Delete($dataContext)]"
+                                    Content="Удалить" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
