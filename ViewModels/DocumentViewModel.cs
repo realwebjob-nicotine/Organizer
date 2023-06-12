@@ -2,12 +2,7 @@
 using Organizer.Models;
 using Organizer.Types;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 
 namespace Organizer.ViewModels
 {
@@ -64,67 +59,93 @@ namespace Organizer.ViewModels
 
         public void Save()
         {
-            var caption = "Редактирование документа";
-
-            var document = new BaseDocument()
+            try
             {
-                Id = Id,
-                Name = Name,
-                Description = Description,
-                Type = Enums.Type.Document,
-                Signature = Signature
-            };
+                var caption = "Редактирование документа";
 
-            //TODO: на рефакторинг, повторяющийся код можно вынести в сервис
-            if (Mode == Enums.WindowMode.Create)
-            {
-                if (Model.ExistsId(Id))
+                var document = new BaseDocument()
                 {
-                    MessageBox.Show("Измените идентификатор, такой идентификатор уже есть!", caption, MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
+                    Id = Id,
+                    Name = Name,
+                    Description = Description,
+                    Type = Enums.Type.Document,
+                    Signature = Signature
+                };
+
+                //TODO: на рефакторинг, повторяющийся код можно вынести в сервис
+                if (Mode == Enums.WindowMode.Create)
                 {
-                    if (Model.AddDocument(document))
+                    if (Model.ExistsId(Id))
                     {
-                        var message = "Документ добавлен, закрыть окно?";
-                        if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        var message = "Измените идентификатор, такой идентификатор уже есть!";
+                        MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        if (Model.AddDocument(document))
                         {
-                            Cancel();
+                            var message = "Документ добавлен, закрыть окно?";
+                            if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                              MessageBoxResult.Yes)
+                            {
+                                Cancel();
+                            }
+                            else
+                            {
+                                Id++;
+                                Sign();
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                if (Model.UpdateDocument(document))
+                else
                 {
-                    var message = "Документ обновлен, закрыть окно?";
-                    if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Model.UpdateDocument(document))
                     {
+                        var message = "Документ обновлен!";
+                        MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                         Cancel();
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Organizer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         public void Sign()
         {
-            var newSign = Guid.NewGuid();
-
-            while (Model.ExistsSignature(newSign))
+            try
             {
-                newSign = Guid.NewGuid();
-            }
+                var newSign = Guid.NewGuid();
 
-            Signature = newSign;
+                while (Model.ExistsSignature(newSign))
+                {
+                    newSign = Guid.NewGuid();
+                }
+
+                Signature = newSign;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Organizer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void GenerateId()
         {
-            if (Id == default)
+            try
             {
-                Id = Model.GetMaxId();
-                Id++;
+                if (Id == default)
+                {
+                    Id = Model.GetMaxId();
+                    Id++;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Organizer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

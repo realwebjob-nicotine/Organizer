@@ -8,14 +8,16 @@ namespace Organizer
 {
     public class EnumConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter,
+          System.Globalization.CultureInfo culture)
         {
             if (value == null) return DependencyProperty.UnsetValue;
 
             return GetDescription((Enum)value);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter,
+          System.Globalization.CultureInfo culture)
         {
             return value;
         }

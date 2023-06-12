@@ -22,7 +22,6 @@ namespace Organizer.ViewModels
         }
 
         private readonly MainModel Model;
-
         private BaseDocument document;
 
         public BaseDocument Document
@@ -54,7 +53,6 @@ namespace Organizer.ViewModels
         public Enums.WindowMode Mode { get; set; }
         public bool IdIsReadOnly { get; set; }
         public bool SaveButtonEnabled => Id != default && !string.IsNullOrEmpty(Name);
-
         public BindableCollection<StateExtended> States { get; set; }
 
         protected override void OnViewLoaded(object view)
@@ -78,73 +76,97 @@ namespace Organizer.ViewModels
 
         public void Save()
         {
-            var caption = "Редактирование задачи";
-
-            var document = new BaseDocument()
+            try
             {
-                Id = Id,
-                Name = Name,
-                Description = Description,
-                Type = Enums.Type.Task,
-                State = SelectedState.State
-            };
+                var caption = "Редактирование задачи";
 
-            //TODO: на рефакторинг, повторяющийся код можно вынести в сервис
-            if (Mode == Enums.WindowMode.Create)
-            {
-                if (Model.ExistsId(Id))
+                var document = new BaseDocument()
                 {
-                    MessageBox.Show("Измените идентификатор, такой идентификатор уже есть!", caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Id = Id,
+                    Name = Name,
+                    Description = Description,
+                    Type = Enums.Type.Task,
+                    State = SelectedState.State
+                };
+
+                //TODO: на рефакторинг, повторяющийся код можно вынести в сервис
+                if (Mode == Enums.WindowMode.Create)
+                {
+                    if (Model.ExistsId(Id))
+                    {
+                        MessageBox.Show("Измените идентификатор, такой идентификатор уже есть!", caption,
+                          MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        if (Model.AddDocument(document))
+                        {
+                            var message = "Задача добавлена, закрыть окно?";
+                            if (MessageBox.Show(message, caption, MessageBoxButton.YesNo,
+                              MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                Cancel();
+                            }
+                            else
+                            {
+                                Id++;
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    if (Model.AddDocument(document))
+                    if (Model.UpdateDocument(document))
                     {
-                        var message = "Задача добавлена, закрыть окно?";
-                        if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                        {
-                            Cancel();
-                        }
-                    }
-
-                }
-            }
-            else
-            {
-                if (Model.UpdateDocument(document))
-                {
-                    var message = "Задача обновлена, закрыть окно?";
-                    if (MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
+                        var message = "Задача обновлена!";
+                        MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                         Cancel();
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Organizer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void GenerateId()
         {
-            if (Id == default)
+            try
             {
-                Id = Model.GetMaxId();
-                Id++;
+                if (Id == default)
+                {
+                    Id = Model.GetMaxId();
+                    Id++;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Organizer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void LoadStates()
         {
-            var tempStates = Enum.GetValues(typeof(Enums.State))
-                .Cast<Enums.State>()
-                .Select(s => new StateExtended() { State = s, Name = GetEnumDescription(s) });
+            try
+            {
+                var tempStates = Enum.GetValues(typeof(Enums.State))
+                    .Cast<Enums.State>()
+                    .Select(s => new StateExtended() { State = s, Name = GetEnumDescription(s) });
 
-            States = new BindableCollection<StateExtended>(tempStates);
+                States = new BindableCollection<StateExtended>(tempStates);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Organizer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private string GetEnumDescription(Enum value)
         {
-            // Get the Description attribute value for the enum value
-            FieldInfo fi = value.GetType().GetField(value.ToString());
-            DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            FieldInfo fieldInfo = value.GetType().GetField(value.ToString());
+            var attributes = (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute),
+              false);
 
             if (attributes.Length > 0)
                 return attributes[0].Description;
