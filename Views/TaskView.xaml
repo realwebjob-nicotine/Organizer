@@ -58,8 +58,9 @@
             Grid.Column="1"
             Grid.ColumnSpan="2"
             Margin="0,5,5,5"
+            DisplayMemberPath="Name"
             ItemsSource="{Binding States}"
-            SelectedItem="{Binding State}" />
+            SelectedItem="{Binding SelectedState}" />
 
         <TextBlock
             Grid.Row="3"
