@@ -9,6 +9,6 @@ namespace Organizer.Types
         public string Description { get; set; }
         public Enums.Type Type { get; set; }
         public Guid? Signature { get; set; }
-        public Enum? State { get; set; }
+        public Enums.State? State { get; set; }
     }
 }
